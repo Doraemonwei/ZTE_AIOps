@@ -25,21 +25,26 @@ test_dataframe_1 = pd.read_csv(test_csv1, header=0)  # 表头是第一行
 test_csv2 = r'data/二阶段/pre_contest_test2.csv'
 test_dataframe_2 = pd.read_csv(test_csv2, header=0)  # 表头是第一行
 
-al_means = defaultdict(lambda: 0)
+
 # 用均值填充
 for column in list(train_dataframe_1.columns[train_dataframe_1.isnull().sum() > 0]):
     mean_val = train_dataframe_1[column].mean()
+    media_cal = train_dataframe_1[column].median()  # 中位数
     train_dataframe_1[column].fillna(mean_val, inplace=True)
-    al_means[column] = mean_val
+
 
 # 用均值填充
 for column in list(test_dataframe_1.columns[test_dataframe_1.isnull().sum() > 0]):
     mean_val = test_dataframe_1[column].mean()
+    media_cal = train_dataframe_1[column].median()  # 中位数
     test_dataframe_1[column].fillna(mean_val, inplace=True)
 
-# 用均值填充
+
 for column in list(test_dataframe_2.columns[test_dataframe_2.isnull().sum() > 0]):
+    # 用均值填充
     mean_val = test_dataframe_2[column].mean()
+    # 中位数填充
+    media_cal = train_dataframe_1[column].median()
     test_dataframe_2[column].fillna(mean_val, inplace=True)
 
 
@@ -131,8 +136,6 @@ if __name__ == '__main__':
     y_pred = knn.predict(X_test)
     # print(confusion_matrix(y_test, y_pred))
     # print(classification_report(y_test, y_pred))
-
-
 
     score = []
     max_f1 = 0

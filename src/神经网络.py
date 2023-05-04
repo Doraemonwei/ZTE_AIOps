@@ -2,15 +2,15 @@
 # @Time : 2023/5/3 19:06
 # @Author : Lanpangzi
 # @File : 神经网络.py
-import numpy as np
+import warnings
 
+import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader, Dataset
-from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report
-import warnings
+from torch.utils.data import DataLoader, Dataset
+
 warnings.filterwarnings("ignore")
 
 
@@ -70,6 +70,7 @@ net = nn.Sequential(
 
 net = net.to('cuda')
 optimizer = torch.optim.Adam(net.parameters(), lr=0.00005)  # 优化器使用adam，传入网络参数和学习率
+StepLR = torch.optim.lr_scheduler.StepLR(optimizer, step_size=3000, gamma=0.5)
 loss_func = torch.nn.CrossEntropyLoss()  # 损失函数使用交叉熵损失函数
 
 if __name__ == '__main__':
@@ -116,5 +117,8 @@ if __name__ == '__main__':
                     pre += torch.max(pre_ys, dim=1)[1]
                     labels += y
                 print("Report : ", classification_report(labels, pre))
-
-
+        if epoch % 3000 == 0:
+            print("************************************************************")
+            print("lr: " + str(optimizer.state_dict()['param_groups'][0]['lr']))
+            print("************************************************************")
+        StepLR.step()  # 学习速率衰减

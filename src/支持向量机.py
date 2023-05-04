@@ -15,13 +15,13 @@ data = load_rbb(train_dataframe_1)
 # print(data)
 X = data.data
 y = data.target
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 scaler = StandardScaler()
 scaler.fit(X_train)
 X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
-model = SVC(kernel='linear', C=10, gamma='scale', decision_function_shape='ovr')
+model = SVC(kernel='rbf', C=10, gamma='scale', decision_function_shape='ovo')
 model.fit(X_train, y_train)
 svc_predictions = model.predict(X_test)
 print("Accuracy of SVM using optimized parameters ", accuracy_score(y_test, svc_predictions) * 100)
