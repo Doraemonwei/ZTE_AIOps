@@ -21,44 +21,45 @@ scaler.fit(X_train)
 X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
-model = SVC(kernel='rbf', C=10, gamma='scale', decision_function_shape='ovo')
+model = SVC(kernel='rbf', C=100, gamma='scale', decision_function_shape='ovr')
 model.fit(X_train, y_train)
 svc_predictions = model.predict(X_test)
 print("Accuracy of SVM using optimized parameters ", accuracy_score(y_test, svc_predictions) * 100)
 print("Report : ", classification_report(y_test, svc_predictions))
 
 
-# 阶段1提交
-test_data = load_rbb(test_dataframe_1)
-X = test_data.data
-scaler.fit(X)
-X_train = scaler.transform(X)
-test_y_pre = model.predict(X_train)
-ans1 = dict()
-for i in range(0, 1005):
-    ans1[str(i)] = int(test_y_pre[i])
-with open("submit.json", "w") as f:
-    json.dump(ans1, f)
-    print("加载入文件完成...")
+def get_answer():
+    # 阶段1提交
+    test_data = load_rbb(test_dataframe_1)
+    X = test_data.data
+    scaler.fit(X)
+    X_train = scaler.transform(X)
+    test_y_pre = model.predict(X_train)
+    ans1 = dict()
+    for i in range(0, 1005):
+        ans1[str(i)] = int(test_y_pre[i])
+    with open("submit.json", "w") as f:
+        json.dump(ans1, f)
+        print("加载入文件完成...")
 
-cnt = Counter(test_y_pre)
-print(cnt)
+    cnt = Counter(test_y_pre)
+    print(cnt)
 
-# 阶段2提交
-test_data = load_rbb(test_dataframe_2)
-X = test_data.data
-scaler.fit(X)
-X_train = scaler.transform(X)
-test_y_pre = model.predict(X_train)
-ans1 = dict()
-for i in range(0, 1047):
-    ans1[str(i)] = int(test_y_pre[i])
-with open("submit2.json", "w") as f:
-    json.dump(ans1, f)
-    print("加载入文件完成...")
+    # 阶段2提交
+    test_data = load_rbb(test_dataframe_2)
+    X = test_data.data
+    scaler.fit(X)
+    X_train = scaler.transform(X)
+    test_y_pre = model.predict(X_train)
+    ans1 = dict()
+    for i in range(0, 1047):
+        ans1[str(i)] = int(test_y_pre[i])
+    with open("submit2.json", "w") as f:
+        json.dump(ans1, f)
+        print("加载入文件完成...")
 
-cnt = Counter(test_y_pre)
-print(cnt)
+    cnt = Counter(test_y_pre)
+    print(cnt)
 
-
+get_answer()
 

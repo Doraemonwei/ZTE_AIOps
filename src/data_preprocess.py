@@ -3,8 +3,6 @@
 # @Author : Lanpangzi
 # @File : data_preprocess.py
 
-from collections import defaultdict
-
 import numpy as np
 # 包括数据分析 以及 读取 csv表格文件并以pandas格式返回
 import pandas as pd
@@ -25,6 +23,11 @@ test_dataframe_1 = pd.read_csv(test_csv1, header=0)  # 表头是第一行
 test_csv2 = r'data/二阶段/pre_contest_test2.csv'
 test_dataframe_2 = pd.read_csv(test_csv2, header=0)  # 表头是第一行
 
+features_fill_speacial_num = ["feature{}".format(i) for i in range(0, 105) if
+                              i not in [2, 4, 23, 30, 36, 38, 41, 48, 58, 64, 79]]
+
+features_not_delete = ["feature{}".format(i) for i in range(0, 105) if
+                       i not in [17, 70, 86]]
 
 # 用均值填充
 for column in list(train_dataframe_1.columns[train_dataframe_1.isnull().sum() > 0]):
@@ -32,13 +35,11 @@ for column in list(train_dataframe_1.columns[train_dataframe_1.isnull().sum() > 
     media_cal = train_dataframe_1[column].median()  # 中位数
     train_dataframe_1[column].fillna(mean_val, inplace=True)
 
-
 # 用均值填充
 for column in list(test_dataframe_1.columns[test_dataframe_1.isnull().sum() > 0]):
     mean_val = test_dataframe_1[column].mean()
     media_cal = train_dataframe_1[column].median()  # 中位数
     test_dataframe_1[column].fillna(mean_val, inplace=True)
-
 
 for column in list(test_dataframe_2.columns[test_dataframe_2.isnull().sum() > 0]):
     # 用均值填充
@@ -73,7 +74,7 @@ def _get_rbbdata(data):
     获取双色球特征值
     :return:
     """
-    data_r = data.iloc[:, 1:105]
+    data_r = data.loc[:, features_not_delete]
     data_np = np.array(data_r)
     return data_np
 
