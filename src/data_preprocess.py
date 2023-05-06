@@ -29,24 +29,32 @@ features_fill_speacial_num = ["feature{}".format(i) for i in range(0, 105) if
 features_not_delete = ["feature{}".format(i) for i in range(0, 105) if
                        i not in [17, 70, 86]]
 
-# 用均值填充
+# 填充缺失数据
 for column in list(train_dataframe_1.columns[train_dataframe_1.isnull().sum() > 0]):
-    mean_val = train_dataframe_1[column].mean()
-    media_cal = train_dataframe_1[column].median()  # 中位数
-    train_dataframe_1[column].fillna(mean_val, inplace=True)
+    # 对于大部分都是相同的数的列，缺失的值使用众数填充，其他的用平均数填充
+    mean_val = train_dataframe_1[column].mean()  # 平均数
+    mode_val = train_dataframe_1[column].median()  # 众数,这里使用中位数替代众数，他们是一样的
+    if column in features_fill_speacial_num:
+        train_dataframe_1[column].fillna(mode_val, inplace=True)
+    else:
+        train_dataframe_1[column].fillna(mean_val, inplace=True)
 
-# 用均值填充
 for column in list(test_dataframe_1.columns[test_dataframe_1.isnull().sum() > 0]):
     mean_val = test_dataframe_1[column].mean()
-    media_cal = train_dataframe_1[column].median()  # 中位数
-    test_dataframe_1[column].fillna(mean_val, inplace=True)
+    mode_val = test_dataframe_1[column].median()# 众数
+    if column in features_fill_speacial_num:
+        test_dataframe_1[column].fillna(mode_val, inplace=True)
+    else:
+        test_dataframe_1[column].fillna(mean_val, inplace=True)
 
 for column in list(test_dataframe_2.columns[test_dataframe_2.isnull().sum() > 0]):
     # 用均值填充
     mean_val = test_dataframe_2[column].mean()
-    # 中位数填充
-    media_cal = train_dataframe_1[column].median()
-    test_dataframe_2[column].fillna(mean_val, inplace=True)
+    mode_val = test_dataframe_2[column].median()  # 众数
+    if column in features_fill_speacial_num:
+        test_dataframe_2[column].fillna(mode_val, inplace=True)
+    else:
+        test_dataframe_2[column].fillna(mean_val, inplace=True)
 
 
 # 一二阶段的训练数据集合是一样的
@@ -74,6 +82,7 @@ def _get_rbbdata(data):
     获取双色球特征值
     :return:
     """
+    # 直接不使用那3个全是0的特征
     data_r = data.loc[:, features_not_delete]
     data_np = np.array(data_r)
     return data_np
@@ -105,7 +114,7 @@ def _get_feature_names():
     获取特征名字
     :return:
     """
-    fnames = ["feature{}".format(i) for i in range(0, 105)]
+    fnames = features_not_delete
     return fnames
 
 
